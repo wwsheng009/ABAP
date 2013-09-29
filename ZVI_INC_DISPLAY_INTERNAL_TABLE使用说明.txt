@@ -1,0 +1,48 @@
+ZVI_INC_DISPLAY_INTERNAL_TABLE调试内表
+
+INCLUDE程序：ZVI_INC_DISPLAY_INTERNAL_TABLE是一个用于显示任何内表的程序，不管内表是以何种方式创建。
+
+ 
+
+使用方法：
+SE38创建一个空的INCLUDE程序，名字为ZVI_INC_DISPLAY_INTERNAL_TABLE.
+1.在主程序中引用这个INCLUDE Z_DEBUG_INC .注意需要在程序的最前面引用，因为它是一个INCLUDE!!!
+2.增加你需要查看的全局内表名，_ADD_TABLE_NAME_DEBUG '' ''. 这是宏，第一个参数是内表的名字，第二个是显示内表的标题。
+3.如果要修改内表的字段的显示抬头。  ：_ADD_FIELD_NAME_DEBUG ''  ''.宏，添加字段，这个宏一定要在_ADD_TABLE 之前使用。
+4.显示调试选项。 _SHOW_DEBUG_DIALOG.
+ 
+ 
+ 
+第一个选项“原程序”，执行原程序，不显示内表。
+第二个选项“逐个内表显示” 会弹出对话框，让你选择需要调试的内表。
+第三个选项“全部内表调试” 以ALV LIST的方式显示所有的内表内容。 
+程序中包含了两种内表显示引擎：
+1.使用CL_SALV_TABLE处理内表。适用于单个内表显示。
+2.使用ALV BLOCK的形式显示。
+ 
+如果内表的列数超过99列，使用第一种方式显示。
+注意表名一定要正确。特别要注意不要把结构名赋值。
+ 
+REPORT ZVI003.
+INCLUDE ZVI_INC_DISPLAY_INTERNAL_TABLE.
+
+DATA GTMARA TYPE TABLE OF MARA.
+DATA GSMARA TYPE MARA.
+
+DATA GTMARC TYPE TABLE OF MARC.
+
+DATA : BEGIN OF TABLE1 OCCURS 0 ,
+     NAME1  TYPE CHAR1,
+     NAME2 TYPE CHAR2,
+    END OF TABLE1.
+
+START-OF-SELECTION.
+
+  SELECT * INTO TABLE GTMARA FROM MARA UP TO 100 ROWS.
+
+  SELECT * INTO TABLE GTMARC FROM MARC UP TO 100 ROWS.
+
+  _ADD_TABLE_NAME_DEBUG 'GTMARA' ''.
+  _ADD_TABLE_NAME_DEBUG 'GTMARC' ''.
+  _ADD_TABLE_NAME_DEBUG 'TABLE1[]' ''.
+  PERFORM _SHOW_DEBUG_DIALOG. 
